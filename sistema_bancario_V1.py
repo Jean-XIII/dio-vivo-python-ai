@@ -1,36 +1,41 @@
 import os
 
-deposito = saque = 0
-LIMITE_SAQUE =3
-lista_deposito = list()
-lista_saque = list()
+deposito_tot = saque = 0
+LIMITE_SAQUE = 3
+historico_saque = list()
+historico_deposito = list()
+
+def deposito(valor_deposito):
+    while valor_deposito <= 0:
+        valor_deposito = float(input('Você não pode depositar valores abaixo de 0! Digite um valor válido: R$'))
+    return valor_deposito
+        
+def saque(valor_saque, arg_limite, arg_deposito):
+    if arg_limite > 0:
+        if valor_saque > 500:
+            return 'Você não pode sacar mais que R$500,00!'
+        elif valor_saque > arg_deposito:
+            return f'Saldo insuficiente! Você quer sacar R${valor_saque:.2f} mas tem R${arg_deposito:.2f} depositado.'
+        else:
+            arg_deposito -= valor_saque
+            return valor_saque, arg_deposito, arg_limite - 1
+    else:
+        return 'Você não pode mais sacar por hoje, tente outro dia!'
 
 while True:
     escolha = int(input('Digite um número para utilizar um dos serviços:\n1 - Depósito\n2 - Saque\n3 - Extrato\nSua escolha:'))
     os.system('cls')
 
     if escolha == 1:
-        valor_deposito = float(input('Digite o valor do depósito: R$'))
-        while valor_deposito < 1:
-            valor_deposito = float(input('Você não pode depositar valores abaixo de 0!\nDigite o valor a ser depositado: R$'))
-        deposito += valor_deposito
-        lista_deposito.append(valor_deposito)
+        var_temp = deposito(float(input('Digite o valor do depósito: R$')))
+        deposito_tot += var_temp
+        historico_deposito.append(var_temp)
+        print(f'Você depositou R${var_temp:.2f}')
 
     elif escolha == 2:
-        if LIMITE_SAQUE != 0:
-            valor_saque = float(input(f'Você pode realizar {LIMITE_SAQUE} de 3 saques diários de no máximo R$ 500,00.\nValor a ser sacado: R$'))
-            if valor_saque > 500:
-                print('Você não pode sacar mais que R$500,00!')
-            elif valor_saque > deposito:
-                print(f'Saldo insuficiente! Você quer sacar R${valor_saque:.2f} mas tem R${deposito:.2f} depositado.')
-            else:
-                deposito -= valor_saque
-                print(f'Você sacou R${valor_saque:.2f}, saldo restante: R${deposito:.2f}')
-                lista_saque.append(valor_saque)
-                LIMITE_SAQUE -= 1
-        else:
-            print('Você não pode mais sacar por hoje, tente outro dia!')
-        
+        saq_temp, deposito_tot, LIMITE_SAQUE = saque(valor_saque=float(input(f'Você pode realizar {LIMITE_SAQUE} de 3 saques diários de no máximo R$ 500,00.\nValor a ser sacado: R$')), arg_limite=LIMITE_SAQUE, arg_deposito=deposito_tot)
+        print(f'Você sacou R${saq_temp:.2f}, restando R${deposito_tot:.2f} no seu saldo.')
+
     elif escolha == 3:
         print(50*'=')
         print('Depósitos:')
